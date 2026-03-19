@@ -1,0 +1,20 @@
+{
+    "name": "2526-b3-cours-backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node --watch src/test.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "type": "module",
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "volta": {
+        "node": "24.14.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.4.0",
+        "typescript": "^5.9.3"
+    }
+}
