@@ -15,3 +15,13 @@ Voici la liste des routes nécessaires pour ce projet :
 - `POST /login` : se connecter avec le système de session
 - `GET /logout` : se déconnecter de la session active
 - `GET /admin-data` : accéder à des données secrètes de l'application (nécessite d'être connecté via session)
+
+### API Recettes (Cordon Bleu)
+- `GET /api/recipes/` : Récupérer les 10 recettes les plus populaires (page d'accueil)
+- `GET /api/recipes/search?q=motcle` : Rechercher une recette par nom
+- `GET /api/recipes/:id` : Afficher les détails d'une recette (incrémente les vues)
+- `POST /api/recipes/` : Ajouter une nouvelle recette (nécessite un token)
+- `POST /api/recipes/:id/duplicate` : Dupliquer une recette existante (nécessite un token)
+- `PUT /api/recipes/:id` : Modifier une recette (nécessite un token)
+- `DELETE /api/recipes/:id` : Supprimer une recette (nécessite un token)
+

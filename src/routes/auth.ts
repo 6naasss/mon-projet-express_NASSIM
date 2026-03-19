@@ -9,7 +9,7 @@ const storage = diskStorage({
     filename: (req, file, cb) => {
         const name = file.originalname
         console.log("file name", name);
-        const iso8601Date = new Date().toISOString()
+        const iso8601Date = new Date().toISOString().replace(/:/g, '-')
         const filename = `${iso8601Date}.${name}`
         cb(null, filename)
     }

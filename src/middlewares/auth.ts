@@ -18,6 +18,7 @@ export function checkAuth(
             res.sendStatus(StatusCodes.UNAUTHORIZED);
             return;
         }
+        (req as any).user = user;
         console.log("valid token, processing request...");
 
         next();

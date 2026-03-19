@@ -1,17 +1,12 @@
 import { createAccessToken, createRefreshToken, createUser, getUser } from "#services/auth";
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken"
-// import { type } from "arktype"
+import jwt from "jsonwebtoken";
+import type { Request, Response } from "express";
+import type { LoginData, RegisterData } from "../models.ts";
 
-// export const LoginData = type({
-//   email: "string.email",
-//   password: "string"
-// })
-// export type LoginDataType = typeof LoginData.infer
-
-export async function login(req: any, res: any) {
+export async function login(req: Request, res: Response) {
     try {
-        const loginData = req.body //LoginData.assert(req.body)
+        const loginData: LoginData = req.body //LoginData.assert(req.body)
         console.log("login data", loginData);
 
         const dbUser = await getUser(loginData)
@@ -28,13 +23,13 @@ export async function login(req: any, res: any) {
     }
 }
 //ici
-export async function logout(req: any, res: any) {
+export async function logout(req: Request, res: Response) {
     res.clearCookie("accessToken")
     res.clearCookie("refreshToken")
     res.sendStatus(StatusCodes.OK)
 }
 
-export async function refresh(req: any, res: any) {
+export async function refresh(req: Request, res: Response) {
     const oldTokenString = req.cookies.accessToken
     const oldToken = jwt.decode(oldTokenString)
     console.log("old token", oldToken);
@@ -46,18 +41,17 @@ export async function refresh(req: any, res: any) {
 }
 
 
-export async function register(req: any, res: any) {
+export async function register(req: Request, res: Response) {
     const json = req.body
     console.log("json", json.data);
 
-    const data = JSON.parse(json.data)
+    const data: RegisterData = JSON.parse(json.data)
     if (data.password != data.confirmPassword) {
         throw new Error("Passwords do not match")
     }
     console.log("register data", data);
     console.log("req file", req.file);
     const avatarUrl = req.protocol + "://" + req.get("host") + "/uploads/" + req.file!.filename
-    data.avatar = avatarUrl
     await createUser(data.name, data.password, avatarUrl)
     res.sendStatus(StatusCodes.CREATED)
 }

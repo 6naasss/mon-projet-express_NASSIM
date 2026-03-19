@@ -28,11 +28,30 @@ export async function createSchema() {
     await connection.query("ALTER TABLE users ADD CONSTRAINT users_name_unique UNIQUE (name)")
     await connection.query("ALTER TABLE users ADD CONSTRAINT users_email_unique UNIQUE (email)")
     await connection.query("INSERT INTO users(name,email,passwordHash) VALUES ('remy','remy@example.com','" + (await hash("ioupi", 10)) + "')")
+
+    await connection.query(`CREATE TABLE recipes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        ingredients TEXT,
+        servings INT,
+        needsOven BOOLEAN,
+        needsSpecificEquipment BOOLEAN,
+        hasExoticIngredients BOOLEAN,
+        originCountry VARCHAR(255),
+        price INT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        authorId INT,
+        views INT DEFAULT 0,
+        lastViewedAt DATETIME,
+        FOREIGN KEY (authorId) REFERENCES users(id) ON DELETE CASCADE
+    )`)
     connection.end()
 }
 
 export async function deleteSchema() {
     const connection = await pool.getConnection()
+    await connection.query("DROP TABLE IF EXISTS recipes")
     await connection.query("DROP TABLE users")
     connection.end()
 }

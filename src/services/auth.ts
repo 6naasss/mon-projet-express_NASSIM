@@ -1,11 +1,11 @@
-import { getDb } from "#database"
+import { getDb } from "../../database.ts"
 import { compare, hash } from "bcrypt"
 import { StatusCodes } from "http-status-codes"
 import jwt from "jsonwebtoken"
 import createError from "http-errors"
-// import { LoginData } from "#controllers/auth"
-// LoginData.pick["email"]
-export async function getUser(loginData: { name: string, password: string }) {
+import type { LoginData } from "../models.ts"
+
+export async function getUser(loginData: LoginData) {
     const db = await getDb()
     const allUsers = await db.query("SELECT * FROM users")
     console.log("all users", allUsers);

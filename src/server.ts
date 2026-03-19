@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import session from 'express-session';
 
 const app = express();
@@ -60,4 +60,8 @@ app.get('/admin-data', (req: Request, res: Response) => {
     }
 });
 
-app.listen(3000, () => console.log("Serveur prêt sur http://localhost:3000"));
+import { createApp } from '../createAPP.ts';
+const apiApp = createApp();
+app.use(apiApp);
+
+app.listen(3000, () => console.log("Serveur prêt sur http://localhost:3000 et API disponibles"));

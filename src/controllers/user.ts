@@ -1,4 +1,4 @@
-import { loadUsers } from "#services/users"
+import { loadUsers } from "#services/user"
 import { StatusCodes } from "http-status-codes"
 
 export function getUsers(req: any, res: any) {
