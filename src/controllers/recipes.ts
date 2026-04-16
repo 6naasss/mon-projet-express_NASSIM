@@ -63,6 +63,13 @@ export async function createRecipe(req: Request, res: Response) {
 export async function updateRecipe(req: Request, res: Response) {
     try {
         const id = parseInt(req.params.id as string);
+        const userName = (req as any).user.name;
+        const authorId = await getAuthorId(userName);
+        
+        const recipe = await recipeService.getRecipeById(id);
+        if (!recipe) return res.status(404).json({ error: "Recette introuvable" });
+        if (recipe.authorId !== authorId) return res.status(403).json({ error: "Accès refusé : vous n'êtes pas l'auteur." });
+
         await recipeService.updateRecipe(id, req.body);
         res.json({ message: "Recette modifiée avec succès" });
     } catch (error) {
@@ -73,6 +80,13 @@ export async function updateRecipe(req: Request, res: Response) {
 export async function deleteRecipe(req: Request, res: Response) {
     try {
         const id = parseInt(req.params.id as string);
+        const userName = (req as any).user.name;
+        const authorId = await getAuthorId(userName);
+        
+        const recipe = await recipeService.getRecipeById(id);
+        if (!recipe) return res.status(404).json({ error: "Recette introuvable" });
+        if (recipe.authorId !== authorId) return res.status(403).json({ error: "Accès refusé : vous n'êtes pas l'auteur." });
+
         await recipeService.deleteRecipe(id);
         res.json({ message: "Recette supprimée avec succès" });
     } catch (error) {
@@ -87,6 +101,10 @@ export async function duplicateRecipe(req: Request, res: Response) {
         const authorId = await getAuthorId(userName);
         
         if (!authorId) return res.status(401).json({ error: "Utilisateur non trouvé" });
+
+        const recipe = await recipeService.getRecipeById(id);
+        if (!recipe) return res.status(404).json({ error: "Recette introuvable" });
+        if (recipe.authorId !== authorId) return res.status(403).json({ error: "Accès refusé : vous n'êtes pas l'auteur." });
 
         const newId = await recipeService.duplicateRecipe(id, authorId);
         res.status(201).json({ id: newId, message: "Recette dupliquée avec succès" });

@@ -3,6 +3,7 @@ import { fetchApi } from "../api";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { DbRecipe } from "../types";
+import { useAuth } from "../context/AuthContext";
 
 export function RecipeForm() {
     const { id } = useParams(); // S'il y a un ID dans l'URL, c'est une modification 
@@ -11,17 +12,24 @@ export function RecipeForm() {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    const { user } = useAuth();
+
     // Au chargement, si on est en mode édition, on va chercher la recette existante
     useEffect(() => {
         if (isEditMode) {
             fetchApi(`/recipes/${id}`).then(async res => {
                 if (res.ok) {
                     const data = await res.json();
+                    if (user && user.id !== data.authorId) {
+                        alert("Accès refusé : vous n'êtes pas l'auteur de cette recette.");
+                        navigate("/");
+                        return;
+                    }
                     reset(data); // Remplit le formulaire magiquement avec react-hook-form
                 }
             });
         }
-    }, [id, isEditMode, reset]);
+    }, [id, isEditMode, reset, navigate, user]);
 
     const onSubmit = async (data: DbRecipe) => {
         try {

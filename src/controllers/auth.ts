@@ -15,7 +15,7 @@ export async function login(req: Request, res: Response) {
         res.cookie("accessToken", accesstoken, { httpOnly: true, maxAge: 1000 * 60 * 10 })
         const refreshToken = await createRefreshToken({ name: loginData.name })
         res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 })
-        res.status(StatusCodes.OK).json({ name: dbUser.name, avatar: dbUser.avatar })
+        res.status(StatusCodes.OK).json({ id: dbUser.id, name: dbUser.name, avatar: dbUser.avatar })
     }
     catch (err) {
         console.log("err", err);

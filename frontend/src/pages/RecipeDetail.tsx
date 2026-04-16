@@ -61,16 +61,12 @@ export function RecipeDetail() {
                     </p>
                 </div>
                 
-                {/* Actions uniquement visibles pour l'auteur (ou pour duplication) */}
-                {user && (
+                {/* Actions uniquement visibles pour l'auteur de la recette */}
+                {isOwner && (
                     <div className="actions">
                         <button onClick={handleDuplicate} className="btn btn-secondary">Dupliquer</button>
-                        {isOwner && (
-                            <>
-                                <Link to={`/edit-recipe/${recipe.id}`} className="btn btn-secondary">Modifier</Link>
-                                <button onClick={handleDelete} className="btn" style={{ background: "transparent", border: "1px solid red", color: "red" }}>Supprimer</button>
-                            </>
-                        )}
+                        <Link to={`/edit-recipe/${recipe.id}`} className="btn btn-secondary">Modifier</Link>
+                        <button onClick={handleDelete} className="btn" style={{ background: "transparent", border: "1px solid red", color: "red" }}>Supprimer</button>
                     </div>
                 )}
             </div>
