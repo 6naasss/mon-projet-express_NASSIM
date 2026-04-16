@@ -46,7 +46,7 @@ export async function searchRecipes(query: string) {
 export async function getRecipeById(id: number) {
     const db = await getDb();
     // Incrémenter la popularité
-    await db.query("UPDATE recipes SET views = views + 1, lastViewedAt = NOW() WHERE id = ?", [id]);
+    await db.query("UPDATE recipes SET views = views + 1, lastViewedAt = datetime('now') WHERE id = ?", [id]);
     
     // Récupérer la recette
     const rows = await db.query("SELECT * FROM recipes WHERE id = ?", [id]);

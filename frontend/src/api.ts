@@ -2,8 +2,8 @@ export const API_URL = "http://localhost:3000/api";
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     const isFormData = options.body instanceof FormData;
-    
-    // On met le json par défaut, sauf si c'est un FormData (pour upload d'image)
+
+    // json par défaut, sauf si c'est un FormData (pour upload d'image)
     const defaultHeaders: any = {};
     if (!isFormData) {
         defaultHeaders["Content-Type"] = "application/json";
@@ -11,7 +11,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
     const finalOptions: RequestInit = {
         ...options,
-        credentials: "include", 
+        credentials: "include",
         headers: {
             ...defaultHeaders,
             ...options.headers

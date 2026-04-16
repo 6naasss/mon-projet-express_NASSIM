@@ -17,7 +17,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <Link to={`/recipe/${recipe.id}`} className="card">
             {/* Zone d'image factice design */}
             <div className="card-img">
-                <span style={{ fontSize: "3rem" }}>🍲</span>
+                <span style={{ fontSize: "2rem", color: "var(--text-muted)" }}>Aperçu non disponible</span>
             </div>
             
             {/* Contenu textuel */}
@@ -31,7 +31,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                 </p>
                 
                 <div style={{ marginTop: "1rem", fontWeight: "bold", color: "var(--primary-color)" }}>
-                    👀 {recipe.views} vues
+                    {recipe.views} vues
                 </div>
             </div>
         </Link>

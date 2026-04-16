@@ -40,18 +40,18 @@ export function Login() {
 
     return (
         <div className="form-container">
-            <h1>Connexion 🔑</h1>
+            <h1>Connexion</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Nom d'utilisateur</label>
-                    <input {...register("name", { required: true })} placeholder="Ex: remy" />
+                    <input {...register("name", { required: true })} />
                 </div>
                 <div className="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" {...register("password", { required: true })} placeholder="Secret absolu" />
+                    <input type="password" {...register("password", { required: true })} />
                 </div>
 
-                {error && <p className="error-text">❌ {error}</p>}
+                {error && <p className="error-text">{error}</p>}
                 
                 <button type="submit" className="btn" style={{ width: "100%", marginTop: "1rem" }}>Se connecter</button>
 

@@ -17,10 +17,9 @@ export function Register() {
         try {
             setServerError(null);
 
-            // Comme le backend attend le champ `data` en JSON stringifié ET un avatar, on utilise un FormData !
             const formData = new FormData();
             
-            // On prépare le payload (comme sur Thunder Client !)
+            // On prépare le payload (comme sur Thunder Client )
             const payloadArray = {
                 name: data.name,
                 password: data.password,
@@ -56,7 +55,7 @@ export function Register() {
 
     return (
         <div className="form-container">
-            <h1>S'inscrire 📝</h1>
+            <h1>S'inscrire</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Nom d'utilisateur</label>
@@ -80,7 +79,7 @@ export function Register() {
                     {errors.confirmPassword && <span className="error-text">{errors.confirmPassword.message?.toString()}</span>}
                 </div>
 
-                {serverError && <p className="error-text">❌ {serverError}</p>}
+                {serverError && <p className="error-text">{serverError}</p>}
                 
                 <button type="submit" className="btn" style={{ width: "100%", marginTop: "1rem" }}>Créer mon compte</button>
             </form>

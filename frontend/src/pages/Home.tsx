@@ -44,7 +44,7 @@ export function Home() {
     return (
         <div>
             <h1 style={{ textAlign: "center", marginBottom: "1rem", fontSize: "2.5rem" }}>
-                Trouvez la recette parfaite 🍽️
+                Trouvez la recette parfaite
             </h1>
             
             {/* Barre de recherche */}

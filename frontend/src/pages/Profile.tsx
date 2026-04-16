@@ -7,7 +7,7 @@ import type { DbUser } from "../types";
 export function Profile() {
     const { user, setUser } = useAuth();
     // On peut utiliser une partie factice ici (Le backend n'a pas forcément de route PUT /api/users/:id)
-    // S'il n'y en a pas, c'est pas grave, on met le code React pour simuler l'UI.
+    // S'il n'y en a pas, oklm, on met le code React pour simuler l'UI.
     const { register, handleSubmit } = useForm<DbUser>({
         defaultValues: {
             name: user?.name,
@@ -20,7 +20,7 @@ export function Profile() {
         // Idéalement on ferait un PUT vers le backend
         // const res = await fetchApi(`/users/${user?.id}`, { method: "PUT", body: JSON.stringify(data) });
         
-        // Pour la demo, on met juste à jour le contexte global
+        // Pour la demo, juste à jourer le contexte global
         setUser({ ...user!, name: data.name, email: data.email });
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000); // Enlève le message après 3s
@@ -30,7 +30,7 @@ export function Profile() {
 
     return (
         <div className="form-container">
-            <h1>Mon Profil 👤</h1>
+            <h1>Mon Profil</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Nouveau nom d'utilisateur</label>

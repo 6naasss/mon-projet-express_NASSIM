@@ -9,11 +9,20 @@ export function RecipeDetail() {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [recipe, setRecipe] = useState<DbRecipe | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadRecipe = async () => {
-            const res = await fetchApi(`/recipes/${id}`);
-            if (res.ok) setRecipe(await res.json());
+            try {
+                const res = await fetchApi(`/recipes/${id}`);
+                if (res.ok) {
+                    setRecipe(await res.json());
+                } else {
+                    setError("Impossible de charger cette recette.");
+                }
+            } catch (err) {
+                setError("Erreur de connexion.");
+            }
         };
         loadRecipe();
     }, [id]);
@@ -35,7 +44,8 @@ export function RecipeDetail() {
         }
     };
 
-    if (!recipe) return <div className="container">Chargement de la recette...</div>;
+    if (error) return <div className="container" style={{ color: "red", textAlign: "center" }}><h2>{error}</h2></div>;
+    if (!recipe) return <div className="container" style={{ textAlign: "center" }}><h2>Chargement de la recette...</h2></div>;
 
     // Est-ce qu'on est l'auteur ?
     const isOwner = user && user.id === recipe.authorId;
@@ -47,18 +57,18 @@ export function RecipeDetail() {
                     <span className="badge facile">{recipe.difficulty || "Non calculée"}</span>
                     <h1 style={{ marginBottom: "0.5rem" }}>{recipe.name}</h1>
                     <p style={{ color: "var(--text-muted)" }}>
-                        🌍 {recipe.originCountry || "Origine Inconnue"} • 💰 {recipe.price}€ • 👥 {recipe.servings} personnes
+                        Origine: {recipe.originCountry || "Inconnue"} • Prix: {recipe.price}€ • Portions: {recipe.servings} personne(s)
                     </p>
                 </div>
                 
                 {/* Actions uniquement visibles pour l'auteur (ou pour duplication) */}
                 {user && (
                     <div className="actions">
-                        <button onClick={handleDuplicate} className="btn btn-secondary">Dupliquer 📋</button>
+                        <button onClick={handleDuplicate} className="btn btn-secondary">Dupliquer</button>
                         {isOwner && (
                             <>
-                                <Link to={`/edit-recipe/${recipe.id}`} className="btn btn-secondary">Modifier ✏️</Link>
-                                <button onClick={handleDelete} className="btn" style={{ background: "transparent", border: "1px solid red", color: "red" }}>Supprimer 🗑️</button>
+                                <Link to={`/edit-recipe/${recipe.id}`} className="btn btn-secondary">Modifier</Link>
+                                <button onClick={handleDelete} className="btn" style={{ background: "transparent", border: "1px solid red", color: "red" }}>Supprimer</button>
                             </>
                         )}
                     </div>
@@ -66,16 +76,16 @@ export function RecipeDetail() {
             </div>
 
             <div style={{ marginTop: "2rem" }}>
-                <h3>🥘 Ingrédients & Préparation</h3>
+                <h3>Ingrédients & Préparation</h3>
                 <div style={{ padding: "1.5rem", background: "rgba(0,0,0,0.2)", borderRadius: "8px", marginTop: "1rem", whiteSpace: "pre-line" }}>
                     {recipe.ingredients}
                 </div>
             </div>
 
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
-                {recipe.needsOven === 1 && <span className="badge moyenne">🔥 Four Requis</span>}
-                {recipe.needsSpecificEquipment === 1 && <span className="badge moyenne">⚙️ Équipement Spécifique</span>}
-                {recipe.hasExoticIngredients === 1 && <span className="badge moyenne">🥥 Ingrédients Exotiques</span>}
+                {recipe.needsOven === 1 && <span className="badge moyenne">Four Requis</span>}
+                {recipe.needsSpecificEquipment === 1 && <span className="badge moyenne">Équipement Spécifique</span>}
+                {recipe.hasExoticIngredients === 1 && <span className="badge moyenne">Ingrédients Exotiques</span>}
             </div>
         </div>
     );

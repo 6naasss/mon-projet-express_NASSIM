@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { DbRecipe } from "../types";
 
 export function RecipeForm() {
-    const { id } = useParams(); // S'il y a un ID dans l'URL, c'est une modification !
+    const { id } = useParams(); // S'il y a un ID dans l'URL, c'est une modification 
     const isEditMode = Boolean(id);
     const { register, handleSubmit, reset } = useForm<DbRecipe>();
     const [error, setError] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export function RecipeForm() {
 
     return (
         <div className="form-container" style={{ maxWidth: "700px" }}>
-            <h1>{isEditMode ? "Modifier la recette ✏️" : "Nouvelle Recette 🍳"}</h1>
+            <h1>{isEditMode ? "Modifier la recette" : "Nouvelle Recette"}</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Nom du plat</label>
@@ -96,7 +96,7 @@ export function RecipeForm() {
                     </label>
                 </div>
 
-                {error && <p className="error-text">❌ {error}</p>}
+                {error && <p className="error-text">{error}</p>}
                 
                 <button type="submit" className="btn" style={{ width: "100%" }}>
                     {isEditMode ? "Sauvegarder" : "Publier ma recette"}
