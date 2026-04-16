@@ -61,7 +61,16 @@ app.get('/admin-data', (req: Request, res: Response) => {
 });
 
 import { createApp } from '../createAPP.ts';
+import { schemaExist, createSchema } from '../database.ts';
+
 const apiApp = createApp();
 app.use(apiApp);
 
-app.listen(3000, () => console.log("Serveur prêt sur http://localhost:3000 et API disponibles"));
+schemaExist().then(exists => {
+    if(!exists) {
+        console.log("Creation du schema SQLite...");
+        return createSchema();
+    }
+}).then(() => {
+    app.listen(3000, () => console.log("Serveur prêt sur http://localhost:3000 et API disponibles"));
+}).catch(console.error);

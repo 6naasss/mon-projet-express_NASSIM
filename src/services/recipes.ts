@@ -21,7 +21,7 @@ export async function getTopRecipes() {
     const query = `
         SELECT * FROM recipes 
         WHERE 
-            DATEDIFF(NOW(), lastViewedAt) <= 10 
+            lastViewedAt >= datetime('now', '-10 days')
             OR lastViewedAt IS NULL 
             OR originCountry = 'France'
         ORDER BY views DESC 

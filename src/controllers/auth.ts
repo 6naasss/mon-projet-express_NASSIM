@@ -51,7 +51,7 @@ export async function register(req: Request, res: Response) {
     }
     console.log("register data", data);
     console.log("req file", req.file);
-    const avatarUrl = req.protocol + "://" + req.get("host") + "/uploads/" + req.file!.filename
+    const avatarUrl = req.file ? req.protocol + "://" + req.get("host") + "/uploads/" + req.file.filename : undefined;
     await createUser(data.name, data.password, avatarUrl)
     res.sendStatus(StatusCodes.CREATED)
 }

@@ -1,48 +1,70 @@
-import { createPool } from "mariadb";
+import sqlite3 from "sqlite3";
+import { open, Database } from "sqlite";
 import { hash } from "bcrypt"
 
-const pool = createPool({
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT!),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    connectionLimit: 10
-});
+let dbInstance: Database | null = null;
 
-export function getDb() {
-    return pool.getConnection();
+export async function getDb() {
+    if (!dbInstance) {
+        dbInstance = await open({
+            filename: './database.sqlite',
+            driver: sqlite3.Database
+        });
+    }
+    
+    return {
+        query: async (sql: string, params: any[] = []): Promise<any> => {
+            const isSelect = sql.trim().toUpperCase().startsWith("SELECT") || sql.trim().toUpperCase().startsWith("SHOW");
+            if (isSelect) {
+                if (sql.trim().toUpperCase() === "SHOW TABLES") {
+                    const tables = await dbInstance!.all("SELECT name FROM sqlite_master WHERE type='table'");
+                    return tables.map(t => ({ [`Tables_in_${process.env.DB_NAME || 'database'}`]: t.name }));
+                }
+                return await dbInstance!.all(sql, params);
+            } else {
+                const result = await dbInstance!.run(sql, params);
+                return {
+                    insertId: result.lastID,
+                    affectedRows: result.changes
+                };
+            }
+        },
+        end: () => {
+            // Keep connection alive or fake close
+        }
+    };
 }
 
 export async function schemaExist() {
-    const connection = await pool.getConnection()
-    const tables = await connection.query("SHOW TABLES")
-    const usersTableExists = tables.some((table: any) => table["Tables_in_" + process.env.DB_NAME] === "users")
-    connection.end()
-    return usersTableExists
+    const connection = await getDb();
+    const tables = await connection.query("SHOW TABLES");
+    const usersTableExists = tables.some((table: any) => {
+        const key = Object.keys(table)[0];
+        return table[key] === "users";
+    });
+    connection.end();
+    return usersTableExists;
 }
 
 export async function createSchema() {
-    const connection = await pool.getConnection()
-    await connection.query("CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),email VARCHAR(255), passwordHash VARCHAR(255),avatar VARCHAR(255))")
-    await connection.query("ALTER TABLE users ADD CONSTRAINT users_name_unique UNIQUE (name)")
-    await connection.query("ALTER TABLE users ADD CONSTRAINT users_email_unique UNIQUE (email)")
+    const connection = await getDb()
+    await connection.query("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255) UNIQUE, email VARCHAR(255) UNIQUE, passwordHash VARCHAR(255), avatar VARCHAR(255))")
     await connection.query("INSERT INTO users(name,email,passwordHash) VALUES ('remy','remy@example.com','" + (await hash("ioupi", 10)) + "')")
 
     await connection.query(`CREATE TABLE recipes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(255),
         ingredients TEXT,
-        servings INT,
-        needsOven BOOLEAN,
-        needsSpecificEquipment BOOLEAN,
-        hasExoticIngredients BOOLEAN,
+        servings INTEGER,
+        needsOven INTEGER,
+        needsSpecificEquipment INTEGER,
+        hasExoticIngredients INTEGER,
         originCountry VARCHAR(255),
-        price INT,
+        price INTEGER,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        authorId INT,
-        views INT DEFAULT 0,
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        authorId INTEGER,
+        views INTEGER DEFAULT 0,
         lastViewedAt DATETIME,
         FOREIGN KEY (authorId) REFERENCES users(id) ON DELETE CASCADE
     )`)
@@ -50,8 +72,8 @@ export async function createSchema() {
 }
 
 export async function deleteSchema() {
-    const connection = await pool.getConnection()
+    const connection = await getDb()
     await connection.query("DROP TABLE IF EXISTS recipes")
-    await connection.query("DROP TABLE users")
+    await connection.query("DROP TABLE IF EXISTS users")
     connection.end()
 }
